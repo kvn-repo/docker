@@ -1,0 +1,29 @@
+---
+version: "2"
+services:
+  motioneye:
+    build: .
+    image: motioneye
+    container_name: motioneye-test
+#    devices:
+#      - "/dev/video0:/dev/video0"
+#      - "/dev/video1:/dev/video1"
+    hostname: motioneye
+    restart: always
+    ports:
+      - "8765:8765"
+      - "8766:7999"
+    volumes:
+      - /docker/volumes/motioneye/etc:/etc/motioneye
+      - /docker/volumes/motioneye/run:/var/run/motioneye
+      - /docker/volumes/motioneye/data:/var/lib/motioneye
+      - /etc/localtime:/etc/localtime:ro
+
+
+
+
+#           --device=/dev/video0 \
+#           -h motioneye \
+#           -d motioneye
+#docker logs -f motioneye
+

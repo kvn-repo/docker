@@ -1,0 +1,29 @@
+FROM fedora
+ 
+RUN dnf -y install --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+ 
+RUN dnf -y --best --allowerasing install v4l-utils python-devel gcc curl python-pycurl python-tornado python-pillow python-backports-ssl_match_hostname python2-certifi git autoconf automake libjpeg-turbo libjpeg-turbo-devel make redhat-rpm-config which libwebp-devel ffmpeg-libs ffmpeg-devel ffmpeg-compat ffmpeg findutils
+#RUN dnf -y --best --allowerasing install ffmpeg ffmpeg-devel v4l-utils python-devel gcc curl python-pycurl python-tornado python-pillow python-backports-ssl_match_hostname python2-certifi git autoconf automake libjpeg-turbo libjpeg-turbo-devel make redhat-rpm-config which
+ 
+RUN cd /tmp && \
+    git clone https://github.com/Mr-Dave/motion.git motion-mrdave && \
+    cd /tmp/motion-mrdave  &&  autoreconf -fiv  && \
+    ./configure --prefix=/usr --without-pgsql --without-sdl --without-sqlite3 --without-mysql  && \
+    make  &&  make install  && cp motion /bin/motion   && rm -rf /tmp/motion-mrdave
+ 
+RUN cd /tmp && \
+    git clone https://github.com/ccrisan/motioneye.git && \
+    cd /tmp/motioneye && \
+    python setup.py install && \
+    mkdir -p /etc/motioneye /usr/share/motioneye/extra && \
+    cp /tmp/motioneye/extra/motioneye.conf.sample /usr/share/motioneye/extra/motioneye.conf.sample && \
+    rm -rf /tmp/motioneye
+ 
+VOLUME /etc/motioneye
+VOLUME /var/run/motion
+VOLUME /var/lib/motion
+ 
+CMD mkdir -p /var/lib/motioneye && test -e /etc/motioneye/motioneye.conf || \
+cp /usr/share/motioneye/extra/motioneye.conf.sample /etc/motioneye/motioneye.conf ; \
+/bin/meyectl startserver -c /etc/motioneye/motioneye.conf
+EXPOSE 8765

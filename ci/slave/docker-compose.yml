@@ -1,0 +1,17 @@
+#java -jar agent.jar -jnlpUrl http://192.168.1.120:8080/computer/slave-1/slave-agent.jnlp -secret 01eb110feed5e6f6b598a72ee41fbbafb3051572fe57ded046bd396a21d5a2d9 -workDir "/jenkins"
+
+version: '3'
+services:
+ jenkins_slave:
+  build: .
+  image: jnlp-ansible
+  container_name: jnlp-ansible
+  restart: always
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+  environment:
+    JAVA_OPTS: "-Djava.awt.headless=true"
+    JENKINS_URL: "http://192.168.1.120:8080/"
+    JENKINS_SECRET: "2a6654a66732386c2d760317f8d92582f5e39dc7344a7e308c1836ff65c6b56a"
+    JENKINS_AGENT_NAME: "worker-1"
+    JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"

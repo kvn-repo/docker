@@ -1,0 +1,15 @@
+
+version: '3'
+
+services:
+ jenkins_slave:
+  image: jenkins_slave
+  container_name: jenkins_slave
+  restart: always
+  ports:
+    - "22001:22"
+  volumes:
+    - /home/jenkins/.ssh:/jenkins/.ssh
+    - /etc/localtime:/etc/localtime:ro
+  environment:
+    JAVA_OPTS: "-Djava.awt.headless=true"
